@@ -146,11 +146,11 @@ let r_encode list =
 
 *)
 
-let n_times_c c n =
-  let rec aux acc c n = 
-    if n > 0 then aux (c :: acc) c (n-1)
+let n_times_c n c =
+  let rec aux acc n c = 
+    if n > 0 then aux (c :: acc) (n-1) c
     else acc
-  in aux [] c n
+  in aux [] n c
  
 let rec decode = function
   | [] -> []
@@ -181,3 +181,54 @@ let drop list n =
     | h :: t -> if count = 1 then aux n t 
     else h :: aux (count - 1) t 
   in aux n list
+
+(*
+
+# split ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"] 3;;
+- : string list * string list =
+(["a"; "b"; "c"], ["d"; "e"; "f"; "g"; "h"; "i"; "j"])
+# split ["a"; "b"; "c"; "d"] 5;;
+- : string list * string list = (["a"; "b"; "c"; "d"], [])
+
+*)
+
+(* imagine you could program inside the pattern match: | [n_times_c] or | [n * _ ]*)
+
+let split list n = 
+  let rec aux count acc = function 
+  | [] -> (acc, [])
+  | h :: t -> if count < n 
+              then aux (count+1) (h :: acc) t
+              else (acc, t)
+  in aux 0 [] list
+
+
+(*
+
+# slice ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"; "i"; "j"] 2 6;;
+- : string list = ["c"; "d"; "e"; "f"; "g"]
+
+*)
+
+let slice list i j =
+  let rec aux c = function
+  | [] -> []
+  | h :: t -> if (c < i)
+              then aux (c+1) t
+              else if (c >= i && c <= j)
+              then h :: aux (c+1) t
+              else []
+  in aux 0 list
+
+(* exercise solution:
+let slice list i k =
+   let rec take n = function
+     | [] -> []
+     | h :: t -> if n = 0 then [] else h :: take (n - 1) t
+   in
+   let rec drop n = function
+     | [] -> []
+     | h :: t as l -> if n = 0 then l else drop (n - 1) t
+   in
+   take (k - i + 1) (drop i list);;
+*)
