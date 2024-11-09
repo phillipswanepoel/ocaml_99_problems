@@ -77,11 +77,6 @@ let rec compress list =
       | y :: z -> if h = y then aux acc t else aux (h :: acc) t
     in (aux [] list) |> rev
 
-let rec compress list smaller =
-  match list with
-  | a :: (b :: _ as t) -> if a = b then compress list t else a :: compress list t
-  | smaller -> smaller;;
-
 let rec compress = function
   | a :: (b :: _ as t) -> if a = b then compress t else a :: compress t
   | smaller -> smaller;;
@@ -120,10 +115,6 @@ let encode list =
       if a = b then aux (count+1) t
       else (count+1, a) :: aux 0 t
   in aux 0 list
-
-type 'a rle =
-| One of 'a
-| Many of int * 'a
 
 type 'a rle =
 | One of 'a
@@ -178,8 +169,9 @@ let rec duplicate = function
 let drop list n =
   let rec aux count = function
     | [] -> []
-    | h :: t -> if count = 1 then aux n t 
-    else h :: aux (count - 1) t 
+    | h :: t -> 
+      if count = 1 then aux n t 
+      else h :: aux (count - 1) t 
   in aux n list
 
 (*
@@ -197,9 +189,10 @@ let drop list n =
 let split list n = 
   let rec aux count acc = function 
   | [] -> (acc, [])
-  | h :: t -> if count < n 
-              then aux (count+1) (h :: acc) t
-              else (acc, t)
+  | h :: t -> 
+    if count < n 
+    then aux (count+1) (h :: acc) t
+    else (acc, t)
   in aux 0 [] list
 
 
@@ -213,11 +206,12 @@ let split list n =
 let slice list i j =
   let rec aux c = function
   | [] -> []
-  | h :: t -> if (c < i)
-              then aux (c+1) t
-              else if (c >= i && c <= j)
-              then h :: aux (c+1) t
-              else []
+  | h :: t -> 
+    if (c < i)
+    then aux (c+1) t
+    else if (c >= i && c <= j)
+    then h :: aux (c+1) t
+    else []
   in aux 0 list
 
 (* exercise solution:
