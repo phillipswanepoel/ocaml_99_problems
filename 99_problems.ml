@@ -1,15 +1,15 @@
-let rec last lst = 
+let rec last lst =
   match lst with
   | [] -> None
   | [h] -> Some h
   | _ :: t -> last t
-let rec last_two lst = 
+let rec last_two lst =
   match lst with
   | [] | [_] -> None
   | [y ; z] -> Some (y, z)
   | _ :: t -> last_two t
 
-let rec nth_mine lst n = 
+let rec nth_mine lst n =
   match lst with
   | [] -> None
   | d :: t -> if n = 0 then Some d else nth_mine t (n-1)
@@ -36,7 +36,7 @@ let len lst =
     | _ :: t -> aux (acc+1) t
   in aux 0 lst
 
-let rev lst = 
+let rev lst =
   let rec aux res = function
     | [] -> res
     | h :: t -> aux (h :: res) t
@@ -47,18 +47,18 @@ let is_palindrome lst =
 
 (* Flatten list *)
 type 'a node =
-| One of 'a 
+| One of 'a
 | Many of 'a node list
 
 (*  This variant (type constructor ) has two variants:
     1. One: a value of any type
     2. Many: a list of nodes (each element of list can be one or many) *)
 
-let rec flatten list = 
+let rec flatten list =
   let rec aux acc list =
     match list with
     | []     -> acc
-    | One x :: t -> aux (x :: acc) t  
+    | One x :: t -> aux (x :: acc) t
     | Many l :: t -> aux (aux acc l) t
   in (aux [] list) |> rev
 (* flatten [One "a"; Many [One "b"; Many [One "c" ;One "d"]; One "e"]];;
@@ -71,7 +71,7 @@ let rec compress list =
   let rec aux acc list =
     match list with
     | [] -> acc
-    | h :: t -> 
+    | h :: t ->
       match acc with
       | [] -> aux (h :: acc) t
       | y :: z -> if h = y then aux acc t else aux (h :: acc) t
@@ -100,7 +100,7 @@ let pack list =
        else aux [] ((a :: current) :: acc) t  in
   List.rev (aux [] [] list);;
 
-(* 
+(*
 
 encode ["a"; "a"; "a"; "a"; "b"; "c"; "c"; "a"; "a"; "d"; "e"; "e"; "e"; "e"];;
 - : (int * string) list =
@@ -123,7 +123,7 @@ type 'a rle =
 let r_encode list =
   let rec aux = function
     | [] -> []
-    | (count, element) :: t -> 
+    | (count, element) :: t ->
       if count = 1
       then One element :: aux t
       else Many (count, element)  :: aux t
@@ -138,15 +138,15 @@ let r_encode list =
 *)
 
 let n_times_c n c =
-  let rec aux acc n c = 
+  let rec aux acc n c =
     if n > 0 then aux (c :: acc) (n-1) c
     else acc
   in aux [] n c
- 
+
 let rec decode = function
   | [] -> []
   | One value :: t -> value :: decode t
-  | Many (count, value) :: t -> (n_times_c value count) @ decode t 
+  | Many (count, value) :: t -> (n_times_c value count) @ decode t
 
 (*
 
@@ -169,9 +169,9 @@ let rec duplicate = function
 let drop list n =
   let rec aux count = function
     | [] -> []
-    | h :: t -> 
-      if count = 1 then aux n t 
-      else h :: aux (count - 1) t 
+    | h :: t ->
+      if count = 1 then aux n t
+      else h :: aux (count - 1) t
   in aux n list
 
 (*
@@ -186,11 +186,11 @@ let drop list n =
 
 (* imagine you could program inside the pattern match: | [n_times_c] or | [n * _ ]*)
 
-let split list n = 
-  let rec aux count acc = function 
+let split list n =
+  let rec aux count acc = function
   | [] -> (acc, [])
-  | h :: t -> 
-    if count < n 
+  | h :: t ->
+    if count < n
     then aux (count+1) (h :: acc) t
     else (acc, t)
   in aux 0 [] list
@@ -206,7 +206,7 @@ let split list n =
 let slice list i j =
   let rec aux c = function
   | [] -> []
-  | h :: t -> 
+  | h :: t ->
     if (c < i)
     then aux (c+1) t
     else if (c >= i && c <= j)
@@ -226,3 +226,78 @@ let slice list i k =
    in
    take (k - i + 1) (drop i list);;
 *)
+
+(*
+
+  # rotate ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3;;
+  - : string list = ["d"; "e"; "f"; "g"; "h"; "a"; "b"; "c"]
+
+*)
+
+let rotate list r =
+  let rec take n = function
+    | [] -> []
+    | h :: t -> if n = 0 then [] else h :: take (n-1) t
+  in
+  let rec drop n = function
+    | [] -> []
+    | h :: t as l -> if n = 0 then l else drop (n-1) t
+  in
+  drop (r mod len list) list @ take (r mod len list) list
+
+  (*
+
+  # remove_at 1 ["a"; "b"; "c"; "d"];;
+- : string list = ["a"; "c"; "d"]
+
+  *)
+
+let remove_at list at = 
+  let rec aux count = function
+  | [] -> []
+  | h :: t -> 
+    if count = at
+    then aux (count+1) t
+    else h :: aux (count+1) t
+  in aux 0 list
+(*
+
+insert_at "alfa" 1 ["a"; "b"; "c"; "d"];;
+- : string list = ["a"; "alfa"; "b"; "c"; "d"]
+
+*)
+
+let insert_at element pos list =
+  let rec aux count = function
+  | [] -> if pos >= count then element :: [] else []
+  | h :: t ->
+    if count = pos
+    then element :: h :: aux (count+1) t
+    else h :: aux (count+1) t
+  in aux 0 list
+  
+(*
+
+# range 4 9;;
+- : int list = [4; 5; 6; 7; 8; 9]
+
+*)
+let range a b =
+  let rec aux a b =
+    if a > b then [] else a :: aux (a + 1) b
+  in
+    if a > b then List.rev (aux b a) else aux a b
+
+(*
+
+# rand_select ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3;;
+- : string list = ["e"; "c"; "g"]
+
+    let get_random max =
+      Random.init 0;
+      Random.int max
+*)
+
+
+
+
