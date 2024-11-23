@@ -245,12 +245,12 @@ let rotate list r =
   in
   drop (r mod len list) list @ take (r mod len list) list
 
-  (*
+(*
 
   # remove_at 1 ["a"; "b"; "c"; "d"];;
 - : string list = ["a"; "c"; "d"]
 
-  *)
+*)
 
 let remove_at list at = 
   let rec aux count = function
@@ -260,6 +260,7 @@ let remove_at list at =
     then aux (count+1) t
     else h :: aux (count+1) t
   in aux 0 list
+
 (*
 
 insert_at "alfa" 1 ["a"; "b"; "c"; "d"];;
@@ -289,15 +290,38 @@ let range a b =
     if a > b then List.rev (aux b a) else aux a b
 
 (*
-
 # rand_select ["a"; "b"; "c"; "d"; "e"; "f"; "g"; "h"] 3;;
 - : string list = ["e"; "c"; "g"]
-
-    let get_random max =
-      Random.init 0;
-      Random.int max
 *)
 
+let rec rand_select lst n =
+  let r = Random.int (len lst) in
+  if n > 0
+  then (nth lst r) :: rand_select (remove_at lst r) (n-1)
+  else []
+
+(*
+Draw N different random numbers from the set 1..M.
+# lotto_select 6 49;;
+- : int list = [20; 28; 45; 16; 24; 38]
+*)
+
+let lotto_select n m =
+  rand_select (range 1 m) n
+
+(*
+# permutation ["a"; "b"; "c"; "d"; "e"; "f"];;
+- : string list = ["c"; "d"; "f"; "e"; "b"; "a"]
+*)
+
+let rec permutation lst =
+  if len lst > 0 then
+  let r = Random.int (len lst) in
+    (nth lst r) :: permutation (remove_at lst r) 
+  else []
+   
+
+   
 
 
 
