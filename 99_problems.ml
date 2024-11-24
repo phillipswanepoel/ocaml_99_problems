@@ -319,9 +319,14 @@ let rec permutation lst =
   let r = Random.int (len lst) in
     (nth lst r) :: permutation (remove_at lst r) 
   else []
-   
+  
+(*
 
-   
+# extract 2 ["a"; "b"; "c"; "d"];;
+- : string list list =
+[["a"; "b"]; ["a"; "c"]; ["a"; "d"]; ["b"; "c"]; ["b"; "d"]; ["c"; "d"]]
 
-
-
+*)
+let rec hd_tl f = function
+  | [] -> []
+  | (h :: t) as l -> f l :: hd_tl f t
