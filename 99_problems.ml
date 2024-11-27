@@ -3,6 +3,7 @@ let rec last lst =
   | [] -> None
   | [h] -> Some h
   | _ :: t -> last t
+
 let rec last_two lst =
   match lst with
   | [] | [_] -> None
@@ -252,10 +253,10 @@ let rotate list r =
 
 *)
 
-let remove_at list at = 
+let remove_at list at =
   let rec aux count = function
   | [] -> []
-  | h :: t -> 
+  | h :: t ->
     if count = at
     then aux (count+1) t
     else h :: aux (count+1) t
@@ -276,7 +277,7 @@ let insert_at element pos list =
     then element :: h :: aux (count+1) t
     else h :: aux (count+1) t
   in aux 0 list
-  
+
 (*
 
 # range 4 9;;
@@ -317,9 +318,9 @@ let lotto_select n m =
 let rec permutation lst =
   if len lst > 0 then
   let r = Random.int (len lst) in
-    (nth lst r) :: permutation (remove_at lst r) 
+    (nth lst r) :: permutation (remove_at lst r)
   else []
-  
+
 (*
 
 # extract 2 ["a"; "b"; "c"; "d"];;
@@ -330,3 +331,12 @@ let rec permutation lst =
 let rec hd_tl f = function
   | [] -> []
   | (h :: t) as l -> f l :: hd_tl f t
+
+let rec extract k list =
+if k <= 0 then [[]]
+else match list with
+     | [] -> []
+     | h :: tl ->
+        let with_h = List.map (fun l -> h :: l) (extract (k - 1) tl) in
+        let without_h = extract k tl in
+        with_h @ without_h
