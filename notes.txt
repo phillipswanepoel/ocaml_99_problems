@@ -1,0 +1,3 @@
+custom ops are cool
+let ( &* ) x y = (x + y) * x;;
+2 &* 3 = 10
