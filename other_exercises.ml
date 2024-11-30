@@ -158,3 +158,37 @@ let join_with_sep strings sep =
   | [] -> ""
   | h :: t ->
     List.fold_left (fun acc s -> acc ^ sep ^ s) h t
+
+(*
+Exercise: association list keys [★★★]
+
+Recall that an association list is an implementation of a dictionary
+in terms of a list of pairs, in which we treat the first component of 
+each pair as a key and the second component as a value.
+
+Write a function keys: ('a * 'b) list -> 'a list 
+that returns a list of the unique keys in an association list. 
+Since they must be unique, no value should appear more than once in the output list. 
+The order of values output does not matter. How compact and efficient can you make your solution? 
+Can you do it in one line and linearithmic space and time? Hint: List.sort_uniq.
+*)
+let keys lst = 
+  lst 
+  |> List.map (fun (x , y) -> x) 
+  |> List.sort_uniq (Stdlib.compare)
+
+let keys lst = 
+  lst
+  |> List.rev_map fst
+  |> List.sort_uniq (Stdlib.compare)
+
+(*
+A valid matrix is an int list list that has 
+at least one row, 
+at least one column, 
+and every column has the same number of rows. 
+There are many values of type int list list that are invalid:
+    []
+    [[1; 2]; [3]]
+Implement a function is_valid_matrix
+*)
