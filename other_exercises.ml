@@ -192,3 +192,46 @@ There are many values of type int list list that are invalid:
     [[1; 2]; [3]]
 Implement a function is_valid_matrix
 *)
+let is_valid_matrix = function
+  | [] -> false
+  | r :: rows ->
+    let m = List.length r in
+    m > 0 && List.for_all (fun r' -> m = List.length r') rows
+
+(*
+Implement a function add_row_vectors: int list -> int list -> int list for the element-wise addition of two row vectors. 
+For example, the addition of [1; 1; 1] and [9; 8; 7] is [10; 9; 8]. If the two vectors do not have the same number of entries, 
+the behavior of your function is unspecified—that is, it may do whatever you like. 
+Hint: there is an elegant one-line solution using List.map2. Unit test the function.
+*)
+
+let add_row_vectors = List.map2 ( + )
+
+(*
+Implement a function add_matrices: int list list -> int list list -> int list list for matrix addition. 
+If the two input matrices are not the same size, the behavior is unspecified. 
+Hint: there is an elegant one-line solution using List.map2 and add_row_vectors. Unit test the function.
+*)
+let m = [[1; 2]; [3; 4]]
+let n = [[5; 6]; [7; 8]]
+let add_matrices = List.map2 add_row_vectors
+
+(*
+Implement a function multiply_matrices: int list list -> int list list -> int list list for matrix multiplication.
+If the two input matrices are not of sizes that can be multiplied together, the behavior is unspecified. 
+Unit test the function. Hint: define functions for matrix transposition and row vector dot product.
+*)
+
+(* transposition:
+    [[1;2;3]; [1;2;3]] ->  [[1;1]; [2;2]; [3;3]]
+*)
+
+(* dot_product:
+    [1;2;3] * [1;3;1] = [1*1 + 2*3 + 3*1]
+*)
+
+(* let transposition = function
+  | [] -> []
+  | r :: rows ->
+    let m = List.length r in *)
+
