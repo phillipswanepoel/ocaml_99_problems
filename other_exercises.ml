@@ -212,8 +212,6 @@ Implement a function add_matrices: int list list -> int list list -> int list li
 If the two input matrices are not the same size, the behavior is unspecified. 
 Hint: there is an elegant one-line solution using List.map2 and add_row_vectors. Unit test the function.
 *)
-let m = [[1; 2]; [3; 4]]
-let n = [[5; 6]; [7; 8]]
 let add_matrices = List.map2 add_row_vectors
 
 (*
@@ -230,8 +228,31 @@ Unit test the function. Hint: define functions for matrix transposition and row 
     [1;2;3] * [1;3;1] = [1*1 + 2*3 + 3*1]
 *)
 
-(* let transposition = function
-  | [] -> []
-  | r :: rows ->
-    let m = List.length r in *)
+let rec transpose ls =
+  let rec transpose' acc = function
+    | [] | [] :: _ -> List.rev acc
+    | ls -> transpose' (List.map List.hd ls :: acc) (List.map List.tl ls)
+  in transpose' [] ls
 
+let dot_product a b = List.map2 ( * ) a b |> List.fold_left ( + ) 0
+
+let nths n acc lst =
+  match lst with
+  | [] -> acc
+  | _ :: _ -> List.nth lst n :: acc
+
+let column c matrix = List.fold_left (nths c) [] matrix |> List.rev
+
+let transpose matrix = 
+  let rec aux count =
+    if count >= 0 then
+    (column count matrix) :: aux (count - 1)
+    else []
+    in
+  match matrix with 
+  | [] -> [[]]
+  | row :: _ -> 
+  aux ((List.length row) - 1) |> List.rev
+
+let multiply_matrices m1 m2 =
+  List.map (fun row -> List.map (dot_product row) (transpose m2)) m1
